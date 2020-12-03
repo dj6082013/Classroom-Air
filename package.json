@@ -8,7 +8,6 @@
     "@testing-library/react": "^11.2.2",
     "@testing-library/user-event": "^12.3.0",
     "bootstrap": "^4.5.3",
-    "gh-pages": "^3.1.0",
     "mqtt": "^4.2.6",
     "react": "^17.0.1",
     "react-bootstrap": "^1.4.0",
@@ -18,8 +17,6 @@
     "web-vitals": "^0.2.4"
   },
   "scripts": {
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
