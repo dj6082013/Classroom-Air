@@ -20,11 +20,11 @@ function Home() {
       </Carousel>
       <Container className="p-5">
         <Row>
-          <Col>
+          <Col md>
             <h2>Introduction</h2>
             <p />
           </Col>
-          <Col>
+          <Col md>
             <Image src="3D_room.jpg" alt="Introduction" fluid />
           </Col>
         </Row>
@@ -32,10 +32,10 @@ function Home() {
       <hr />
       <Container className="p-5">
         <Row>
-          <Col>
+          <Col md>
             <Image src="3D_room.jpg" alt="Future Outlook" fluid />
           </Col>
-          <Col>
+          <Col md>
             <h2>Future Outlook</h2>
             <p />
           </Col>

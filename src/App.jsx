@@ -3,10 +3,13 @@ import {
   BrowserRouter as Router, Switch, Route, Link,
 } from 'react-router-dom';
 import { Navbar, Nav } from 'react-bootstrap';
+
 import Home from './home';
 import Classroom from './classroom';
 
 function App() {
+  const rooms = process.env.REACT_APP_ROOMS.split(',');
+
   return (
     <Router>
       <div>
@@ -15,8 +18,7 @@ function App() {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="mr-auto">
-              <Link className="nav-link" to="/">Home</Link>
-              <Link className="nav-link" to="/S2-701">S2-701</Link>
+              { rooms.map((roomId) => <Link key={roomId} className="nav-link" to={`/${roomId}`}>{roomId}</Link>) }
             </Nav>
           </Navbar.Collapse>
         </Navbar>

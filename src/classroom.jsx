@@ -1,11 +1,51 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
-  Container, ToggleButtonGroup, ToggleButton, ProgressBar,
+  Container, ButtonGroup, Button, Card, CardDeck, ProgressBar,
 } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
+import mqtt from 'mqtt';
 
 function Classroom() {
   const { roomID } = useParams();
+
+  const [voteOn, setVoteOn] = useState(0);
+  const [voteOff, setVoteOff] = useState(0);
+
+  const client = mqtt.connect(process.env.REACT_APP_MQTT_BROKER);
+  client.on('connect', () => {
+    client.subscribe(`${roomID}/#`, (err) => {
+      if (err) throw err;
+    });
+  });
+  client.on('message', (topic, message) => {
+    const path = topic.split('/');
+    switch (path[1]) {
+      case 'vote': {
+        const value = parseInt(message, 10);
+        if (path[2] === 'on') setVoteOn(value);
+        if (path[2] === 'off') setVoteOff(value);
+        break;
+      }
+      default:
+        break;
+    }
+  });
+
+  const handleVoteOn = () => {
+    const value = voteOn + 1;
+    client.publish(`${roomID}/vote/on`, value.toString(), {
+      qos: 1,
+      retain: true,
+    });
+  };
+  const handleVoteOff = () => {
+    const value = voteOff + 1;
+    client.publish(`${roomID}/vote/off`, value.toString(), {
+      qos: 1,
+      retain: true,
+    });
+  };
+
   return (
     <Container>
       <div className="p-4 w-100 text-center">
@@ -16,17 +56,26 @@ function Classroom() {
       <div className="pb-4 text-center w-100">
         <strong>Current status</strong>
         <ProgressBar>
-          <ProgressBar variant="success" now={35} key={1} />
-          <ProgressBar variant="danger" now={65} key={2} />
+          <ProgressBar variant="success" now={voteOn} max={voteOn + voteOff} key={1} />
+          <ProgressBar variant="danger" now={voteOff} max={voteOn + voteOff} key={2} />
         </ProgressBar>
       </div>
       <div className="text-center">
+        <CardDeck>
+          <Card>
+            <Card.Header>If turn on...</Card.Header>
+            <Card.Text>Something happens.</Card.Text>
+          </Card>
+          <Card>
+            <Card.Header>If turn off...</Card.Header>
+            <Card.Text>Something happens.</Card.Text>
+          </Card>
+        </CardDeck>
         <h2>You can vote</h2>
-        <ToggleButtonGroup type="radio" name="options" defaultValue={-1} className="w-100">
-          <ToggleButton value={1} variant="success">On</ToggleButton>
-          <ToggleButton value={-1} variant="secondary">Fine</ToggleButton>
-          <ToggleButton value={0} variant="danger">Off</ToggleButton>
-        </ToggleButtonGroup>
+        <ButtonGroup size="lg" className="w-100">
+          <Button variant="success" onClick={handleVoteOn}>On</Button>
+          <Button variant="danger" onClick={handleVoteOff}>Off</Button>
+        </ButtonGroup>
       </div>
     </Container>
   );
