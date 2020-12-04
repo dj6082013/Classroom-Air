@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  Container, ButtonGroup, Button, Card, CardDeck, ProgressBar,
+  Container, ButtonGroup, Button, Card, CardDeck, ProgressBar, ListGroup,
 } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import mqtt from 'mqtt';
@@ -50,11 +50,11 @@ function Classroom() {
     <Container>
       <div className="p-4 w-100 text-center">
         <h1>{`Voting ${roomID}`}</h1>
-        <strong>Voting Rules</strong>
-        <p>This is the rules of vote.</p>
+        <strong>投票規則</strong>
+        <p>只要某方超過65%就獲勝, 若都沒超過系統則自動運行</p>
       </div>
       <div className="pb-4 text-center w-100">
-        <strong>Current status</strong>
+        <strong>目前狀態</strong>
         <ProgressBar>
           <ProgressBar variant="success" now={voteOn} max={voteOn + voteOff} key={1} />
           <ProgressBar variant="danger" now={voteOff} max={voteOn + voteOff} key={2} />
@@ -63,15 +63,25 @@ function Classroom() {
       <div className="text-center">
         <CardDeck>
           <Card>
-            <Card.Header>If turn on...</Card.Header>
-            <Card.Text>Something happens.</Card.Text>
+            <Card.Header>開啟裝置</Card.Header>
+            <ListGroup variant="flush">
+              <ListGroup.Item>好處1：讓室內空氣更加清新。</ListGroup.Item>
+              <ListGroup.Item>好處2：內外空氣流通，降低疾病傳染風險。</ListGroup.Item>
+              <ListGroup.Item>壞處1：可能讓室內空氣溫度稍微上升。</ListGroup.Item>
+              <ListGroup.Item>壞處2：耗能以及需要定期清洗濾網。</ListGroup.Item>
+            </ListGroup>
           </Card>
           <Card>
-            <Card.Header>If turn off...</Card.Header>
-            <Card.Text>Something happens.</Card.Text>
+            <Card.Header>關閉裝置</Card.Header>
+            <ListGroup variant="flush">
+              <ListGroup.Item>好處1：室內溫度保持在空調所設定的溫度。</ListGroup.Item>
+              <ListGroup.Item>好處2：節能以及清洗濾網週期延長。</ListGroup.Item>
+              <ListGroup.Item>壞處1：室內CO2累積導致頭暈、想睡。</ListGroup.Item>
+              <ListGroup.Item>壞處2：內外空氣不流通，增加疾病傳染風險。</ListGroup.Item>
+            </ListGroup>
           </Card>
         </CardDeck>
-        <h2>You can vote</h2>
+        <h2>你可以投票</h2>
         <ButtonGroup size="lg" className="w-100">
           <Button variant="success" onClick={handleVoteOn}>On</Button>
           <Button variant="danger" onClick={handleVoteOff}>Off</Button>
