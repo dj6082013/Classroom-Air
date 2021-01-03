@@ -8,6 +8,8 @@ import mqtt from 'mqtt';
 function Classroom() {
   const { roomID } = useParams();
 
+  const [data, setData] = useState({});
+  const [status, setStatus] = useState('關');
   const [voteOn, setVoteOn] = useState(0);
   const [voteOff, setVoteOff] = useState(0);
 
@@ -21,9 +23,19 @@ function Classroom() {
     const path = topic.split('/');
     switch (path[1]) {
       case 'vote': {
-        const value = parseInt(message, 10);
+        const value = parseInt(message.toString(), 10);
         if (path[2] === 'on') setVoteOn(value);
         if (path[2] === 'off') setVoteOff(value);
+        break;
+      }
+      case 'result': {
+        if (message.toString() === '1') setStatus('開');
+        else setStatus('關');
+        break;
+      }
+      case 'sensors': {
+        data[path[3]] = message.toString();
+        setData(data);
         break;
       }
       default:
@@ -55,11 +67,22 @@ function Classroom() {
       </div>
       <div className="pb-4 text-center w-100">
         <strong>目前狀態</strong>
+        <p className="display-1">{status}</p>
         <ProgressBar>
           <ProgressBar variant="success" now={voteOn} max={voteOn + voteOff} key={1} />
           <ProgressBar variant="danger" now={voteOff} max={voteOn + voteOff} key={2} />
         </ProgressBar>
       </div>
+      <CardDeck className="mb-4">
+        {
+          Object.keys(data).map((key) => (
+            <Card className="text-center text-uppercase">
+              <Card.Header className="font-weight-bold">{key}</Card.Header>
+              <Card.Body className="display-4">{data[key]}</Card.Body>
+            </Card>
+          ))
+        }
+      </CardDeck>
       <div className="text-center">
         <CardDeck>
           <Card>
