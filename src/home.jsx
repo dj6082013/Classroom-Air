@@ -28,7 +28,7 @@ function Home() {
             <p>此外，該系統也可透過手動或是網頁上來控制開啟與否。</p>
           </Col>
           <Col md>
-            <Image src="3D_room.jpg" alt="Introduction" fluid />
+            <Image src="system.png" alt="Introduction" fluid />
           </Col>
         </Row>
       </Container>
@@ -36,7 +36,7 @@ function Home() {
       <Container className="p-5">
         <Row>
           <Col md>
-            <Image src="3D_room.jpg" alt="Future Outlook" fluid />
+            <Image src="future.png" alt="Future Outlook" fluid />
           </Col>
           <Col md>
             <h2>未來展望</h2>
