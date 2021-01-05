@@ -5,6 +5,8 @@ import {
 import { useParams } from 'react-router-dom';
 import mqtt from 'mqtt';
 
+const SENSOR_KEYS = ['temp', 'RH', 'PM2.5', 'CO2', 'CO', 'THI'];
+
 function Classroom() {
   const { roomID } = useParams();
 
@@ -34,7 +36,14 @@ function Classroom() {
         break;
       }
       case 'sensors': {
-        data[path[3]] = message.toString();
+        if (SENSOR_KEYS.includes(path[3])) {
+          data[path[3]] = message.toString();
+          setData(data);
+        }
+        break;
+      }
+      case 'thi': {
+        data.THI = message.toString();
         setData(data);
         break;
       }
@@ -76,8 +85,8 @@ function Classroom() {
       <CardDeck className="mb-4">
         {
           Object.keys(data).map((key) => (
-            <Card className="text-center text-uppercase">
-              <Card.Header className="font-weight-bold">{key}</Card.Header>
+            <Card className="text-center">
+              <Card.Header className="text-uppercase font-weight-bold">{key}</Card.Header>
               <Card.Body className="display-4">{data[key]}</Card.Body>
             </Card>
           ))
