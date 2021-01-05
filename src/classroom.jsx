@@ -5,7 +5,7 @@ import {
 import { useParams } from 'react-router-dom';
 import mqtt from 'mqtt';
 
-const SENSOR_KEYS = ['temp', 'RH', 'PM2.5', 'CO2', 'CO', 'THI'];
+const SENSOR_KEYS = ['temp', 'RH', 'PM2.5', 'CO2', 'CO'];
 
 function Classroom() {
   const { roomID } = useParams();
@@ -18,7 +18,7 @@ function Classroom() {
   const client = mqtt.connect(process.env.REACT_APP_MQTT_BROKER);
   client.on('connect', () => {
     client.subscribe(`${roomID}/#`, (err) => {
-      if (err) throw err;
+      if (!err) client.publish('presence', 'Hello mqtt');
     });
   });
   client.on('message', (topic, message) => {
@@ -38,12 +38,13 @@ function Classroom() {
       case 'sensors': {
         if (SENSOR_KEYS.includes(path[3])) {
           data[path[3]] = message.toString();
+          if (path[3] === 'CO2') data.CO2 = Math.round(data.CO2);
           setData(data);
         }
         break;
       }
-      case 'thi': {
-        data.THI = message.toString();
+      case 'com3': {
+        data.Comfort = message.toString();
         setData(data);
         break;
       }
@@ -82,6 +83,10 @@ function Classroom() {
           <ProgressBar variant="danger" now={voteOff} max={voteOn + voteOff} key={2} />
         </ProgressBar>
       </div>
+      <p>
+        參考氣象局舒適度的公式以及考量到在一定程度上co2濃度過高會導致頭暈、想睡等負面影響，
+        我們利用測量出來的數值代入我們設計的公式，最後得出0~6的舒適度等第，儀器在小於等於2的時候通風裝置自動開啟，其它時間則是預設為關閉。
+      </p>
       <CardDeck className="mb-4">
         {
           Object.keys(data).map((key) => (
